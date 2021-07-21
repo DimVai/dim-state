@@ -1,5 +1,5 @@
 # dim-state
- ### Use State Variables in JavaScript Projects without a framework and without complication. Just works!
+ ### Use State Variables in JavaScript Projects without a framework and without compilation. Just works!
  Live Example here: https://dimvai.github.io/dim-state/
 
 <br/>
