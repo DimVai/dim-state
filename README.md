@@ -1,11 +1,11 @@
 # dim-state
- ### Use State Variables in JavaScript Projects without a framework and without compilation. Just works!
+ ### Use State Variables in your JavaScript projects without a framework and without compilation. It just works!
  Live Example here: https://dimvai.github.io/dim-state/
 
 <br/>
 
 ## **Preparation**
-Download the file **dim-state.js** and import it in your website. Example in your .html file:
+Download the file **dim-state.js** and import it in your website. For example, in your .html file write:
 ```html
 <script defer src="dim-state.js"></script>
 ```
