@@ -1,8 +1,8 @@
-# dim-state  v1.0
+# dim-state
  ### Use State Variables in JavaScript Projects without a framework and without complication. Just works!
  Live Example here: https://dimvai.github.io/dim-state/
 
-<br/><br/>
+<br/>
 
 ## **Preparation**
 Download the file **dim-state.js** and import it in your website. Example in your .html file:
@@ -13,11 +13,10 @@ _Important note_: Import this script **before** any other script that accesses o
 This, will create a **public Object** named `State` and two **public** functions `setState()` and `getState()`. 
 
 
-<br/><br/>
+<br/>
 
 ## **How to use**
 
-<br/>
 
 ### **1st step:**
 In you .html, declare variables like the following example:
@@ -27,7 +26,6 @@ In you .html, declare variables like the following example:
     <p>Summary: There are {{{enemies}}} enemies and {{{friends}}} friends!</p>
 ```
 
-<br/>
 
 ### **2st step:**
 Optionally, run the following command **once**, on ```window.load``` for example, to make your life better later:
@@ -38,7 +36,6 @@ This will allow you to use your State Variables without any quotation marks.
 It will make more public non-writable variables, one for every State Variable.
 If you don't want this (because you may not want public variables), you must use quotation marks every time you access a variable (read below for examples).
 
-<br/>
 
 ### **3rd step:**
 **Access and change the variables.**
@@ -68,7 +65,6 @@ Of course, you can mix and match. If you want to set `friends = 9 - enemies`, th
 setState(friends, 9-State[enemies] );  
 ```
 
-<br/>
 
 ### _Note:_
 If you do not run `State.setStateVarsPublic()`, you have to use quotation marks in every State Variable:
@@ -77,7 +73,7 @@ If you do not run `State.setStateVarsPublic()`, you have to use quotation marks 
     currentEnemies = State["enemies"];
 ```
 
-<br/><br/>
+<br/>
 
 ## How it works behind the scenes. Technical Stuff...
 When `dim-state.js` loads, it accesses your html, and changes your `{{{}}}` variables with a span with the appropriate class. For example, it will change `{{{friends}}}` with this HTML object (with blank innerText at the moment):
