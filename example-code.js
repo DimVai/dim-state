@@ -7,9 +7,8 @@
 //let enemies = "enemies", friends = "friends"
 State.setStateVarsPublic();      
 
-
 //Initialize State Variables values. Setting enemies to 7 and friends to 2.  
-setState(enemies,7);
+State.set(enemies,7);
 setState(friends,2);
 
 

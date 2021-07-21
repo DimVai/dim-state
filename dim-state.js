@@ -11,7 +11,13 @@ var State = {
     stateVariablesArray: [],
     /** Run State.setStateVarsPublic(), in order to set and get State Variables without using quotes */
     setStateVarsPublic: function() {
-        this.stateVariablesArray.map( e =>  window[e]??=e );
+        this.stateVariablesArray.map( e => 
+            Object.defineProperty(window,e,{
+                value: e,
+                writable: false,
+            })
+            //window[e]??=e 
+            );
       },
     /** 
      * @type {(variable: string, value: string) => void}
