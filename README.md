@@ -10,7 +10,7 @@ Download the file **dim-state.js** and import it in your website. For example, i
 <script defer src="dim-state.js"></script>
 ```
 _Important note_: Import this script **before** any other script that accesses or sets any State Variables!
-This, will create a **public Object** named `State` and two **public** functions `setState()` and `getState()`. 
+This, will create a **public Object** named `State` or `window.State`. 
 
 
 <br/>
@@ -42,8 +42,8 @@ If you don't want this (because you may not want public variables), you must use
 
 Set or change variables the **right way**. If you want friends to be 3, then write one of the following:
 ```JavaScript
-    setState(friends, 3);   //right way
-    State.set(friends, 3);  //right way
+    State[friends] = 3;  //right way
+    State.friends = 3;   //right way
 ```
 Do not use the following **wrong way** to set a State Variable!
 ```JavaScript
@@ -52,8 +52,8 @@ Do not use the following **wrong way** to set a State Variable!
 
 Get the value of the variable in your code the **right way** using one of the following:
 ```JavaScript
-    currentEnemies = State[enemies];    //right way
-    currentEnemies = getState(enemies); //right way
+    currentEnemies = State[enemies];   //right way
+    currentEnemies = State.enemies;    //right way    
 ```
 Do not use the following **wrong way**!
 ```JavaScript
@@ -62,27 +62,26 @@ Do not use the following **wrong way**!
 
 Of course, you can mix and match. If you want to set `friends = 9 - enemies`, then write:
 ```JavaScript
-setState(friends, 9-State[enemies] );  
+    State.friends = 9 - State[enemies];  
 ```
 
 
 ### _Note:_
-If you do not run `State.setStateVarsPublic()`, you have to use quotation marks in every State Variable:
+If you do not run `State.setStateVarsPublic()`, you have to use square brackets and quotation marks when you access a State Variable:
 ```JavaScript
-    setState("friends", 3);
+    State["friends"] = 3;
     currentEnemies = State["enemies"];
 ```
 
 <br/>
 
 ## How it works behind the scenes. Technical Stuff...
-When `dim-state.js` loads, it accesses your html, and changes your `{{{}}}` variables with a span with the appropriate class. For example, it will change `{{{friends}}}` with this HTML object (with blank innerText at the moment):
+When `dim-state.js` loads, it accesses your html, and changes your `{{{}}}` variables with a span with the appropriate class. For example, it will change `{{{friends}}}` with the following HTML object (with blank innerText at the moment):
 ```JavaScript
 <span class="state-enemies"></span>
 ```
 Moreover, it will create the property `State.friends` in the public object `State` that will be created. The `State` object has various properties and methods in order to work, but it certainly contains all the State Variables (names and values) as properties (names and values). 
 
-When you access the variable (using `getState()` for example), it simply returns the property's value. Nothing fancy here.
-The properties of the `State` are the single point of truth for `dim-state.js`.
+The properties of the `State` are the single point of truth for the State Variables using `dim-state.js`.
 
-But, when you set or change the variable, using `setState(friends,2)` for example, not only it updates the property, but it also updates the text inside every `state-enemies` span! So, you don't need to babysit the dom on every change. 
+But, when you set or change the variable, not only does it update the property, but it also updates the text inside every `state-enemies` span! So, you don't need to babysit the DOM on every variable change. 

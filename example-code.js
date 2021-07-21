@@ -8,24 +8,23 @@
 State.setStateVarsPublic();      
 
 //Initialize State Variables values. Setting enemies to 7 and friends to 2.  
-State.set(enemies,7);
-setState(friends,2);
+//This creates State.properties to exist. 
+//State.create(enemies,"");
+State[enemies]=7;
+State[friends]=2;
 
 
 //Click logic//
 document.getElementById("kill").addEventListener("click", killEnemy);
 
-//when clicked, decrease enemies by 1 and increase friends by 1
+//when button clicked, decrease enemies by 1 and increase set friends = 9 - enemies
 function killEnemy(){
-    // 2 different ways to change state
-    setState(enemies, decrease(State[enemies]));
-    State.set(friends, 9-State[enemies] );  
+    State[enemies] = decrease(State[enemies]);
+    State.friends = 9-State[enemies];  
 }
 
 //decrease a positive variable by one
 function decrease(variable){
     return Math.max(variable-1,0);
 }
-
-
 

@@ -4,12 +4,17 @@
 
 /** A public object that contains all State Variables */
 var State = {
+    
     /** 
      * @type string[]
      * All State Variables in an array 
      */
     stateVariablesArray: [],
-    /** Run State.setStateVarsPublic(), in order to set and get State Variables without using quotes */
+    
+    /** 
+     * Run State.setStateVarsPublic(), in order to set and get State Variables without using quotes.
+     * (It does not create initialize State.properties from DOM.)
+    */
     setStateVarsPublic: function() {
         this.stateVariablesArray.map( e => 
             Object.defineProperty(window,e,{
@@ -17,16 +22,22 @@ var State = {
                 writable: false,
             })
             //window[e]??=e 
-            );
+        );
       },
-    /** 
-     * @type {(variable: string, value: string) => void}
-     * Sets State Variable to its new value 
-     */
-    set: function(variable, value) {
-        this[variable] = value;
-        this.updateDOMwithState(variable);         //variable, not value!
+
+    /** Initialize state variables as State.properties */  
+    create: function(variable, value) {
+        this["_"+variable] = value;
+        this.updateDOMwithState(variable);
+        Object.defineProperty(State, variable, {
+            set: function(value) { 
+                State["_"+variable] = value; 
+                State.updateDOMwithState(variable);
+            },
+            get: function() { return State["_"+variable] },
+          });
     },
+
     /** Searches specific classes in DOM and updates their value */
     updateDOMwithState: function(variable){
         if (window.jQuery){     //If jQuery
@@ -43,28 +54,18 @@ var State = {
 };
 
 //Format DOM to know where to put state values
-(function setStateClasses(){
+(function setHTMLclasses(){
     let DOMvariables = /{{{(\w+)}}}/gi;
     let unwantedChars = /[\{\}]/g;
     let uniqueArray = arr => [...new Set(arr)];       //without "...", we get a Set, not an Array
+
     let stateVariablesArray = (document.body.innerHTML).match(DOMvariables) || [];
     State.stateVariablesArray = uniqueArray(stateVariablesArray.map(e => e.replace(unwantedChars, '')));
-    document.body.innerHTML = document.body.innerHTML.replace(DOMvariables, '<span class="state-$1"></span>');
-})();  //execute it also
-// Never use window.onload here. It gets overritten by user's window.onload later! 
+    (State.stateVariablesArray).forEach(variable => {State.create(variable,null)})
 
-/** 
- * @type {(variable: string, value: string) => void}
- * Sets state variable to its new value 
- */
-var setState = (variable, value) => {
-    State.set(variable, value);
-};
-/** 
- * @type {(variable: string) => string }
- * Retunrs state variable value 
- */
-var getState = variable => {
-    return State[variable];
-};
+    document.body.innerHTML = document.body.innerHTML.replace(DOMvariables, '<span class="state-$1"></span>');
+})();  //execute it also!
+
+// Never use window.onload for these. It gets overritten by user's window.onload later! 
+
 
