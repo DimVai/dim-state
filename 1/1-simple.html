@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dim-state Game 1</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+    <script defer src="../dim-state.js"></script>
+    <script defer src="1-simple-code.js"></script>
+</head>
+<body>
+    <div class="container text-center my-5" style="max-width: 700px;">
+    
+        <h1>Dim-state Game 1</h1>
+        <p>Example 1: Start setting State Variables.
+            <br>We do not update the page programmatically when we click the button. 
+            We only update the state variables "enemies" and "friends" in our JavaScript code. The page numbers are updated automatically everywhere.</p> 
+
+        <br>
+        <h4>You have {{{enemies}}} enemies left to kill</h4>
+        <h4>You have {{{friends}}} friends left to love</h4>
+        <button class="btn btn-primary m-3" id="kill">Kill an enemy</button>
+        <h5>Summary of state: 
+            <br> You have {{{enemies}}} enemies left to kill and {{{friends}}} friends left to love!</h5>
+
+</div>
+</body>
+</html>

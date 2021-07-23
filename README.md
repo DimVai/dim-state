@@ -1,5 +1,6 @@
 # dim-state
- ### Use State Variables in your JavaScript projects without a framework and without compilation. It just works!
+ ### Use State Variables in your JavaScript projects without a framework and without compilation. It just works! ###
+ ### By Dimitris Vainanidis (c) 2021. ###
  Live Example here: https://dimvai.github.io/dim-state/
 
 <br/>
@@ -19,7 +20,7 @@ This, will create a **public Object** named `State` or `window.State`.
 
 
 ### **1st step:**
-In you .html, declare variables like the following example:
+In your .html file, declare variables like the following example:
 ```html
     <h3>You have {{{enemies}}} enemies left to kill</h3>
     <h4>You have {{{friends}}} friends left to love</h4>

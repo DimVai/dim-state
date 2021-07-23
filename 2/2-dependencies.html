@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dim-state Game 2</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+    <script defer src="../dim-state.js"></script>
+    <script defer src="2-dependencies-code.js"></script>
+
+
+</head>
+<body>
+    <div class="container text-center my-5" style="max-width: 600px;">
+    
+        <h1>Dim-state Game 2</h1>
+        <p>Example 2: Start using relationships between variables.
+            <br>We have set up "friends" as a function of "enemies", and "power" as a function of "friends" and "enemies".
+            <br>When we click the button, we only update "enemies" programmatically.
+            Friends and power update automatically, as well as the numbers in the page!
+        </p> 
+        <br>
+        <h3>You have {{{enemies}}} enemies left to kill</h3>
+        <h4>You have {{{friends}}} friends left to love</h4>
+        <button class="btn btn-primary m-3" id="kill">Kill an enemy</button>
+        <p>Summary of state: you have {{{enemies}}} enemies left to kill and {{{power}}} power!</p>
+
+
+</div>
+</body>
+</html>

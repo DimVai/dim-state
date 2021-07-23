@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dim-state Game 3</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="../dim-state.js"></script>
+    <script defer src="3-state-without-code.js"></script>
+
+
+</head>
+<body>
+    <div class="container my-5 text-center" style="max-width: 800px;">
+    
+        <h1>Dim-state Game 3</h1>
+        <p>Example 3: Zero Javascript.
+            <br>All the "enemies", "friends" and "power" numbers in the page are syncronized with zero JavaScript code!<br>
+            We used Javascript only to set the dependencies between, "enemies", "friends" and "power" variables. 
+            There are no event listeners in our code. 
+        </p>
+        <p>Enemies: {{{enemies}}}</p>
+            <input type="range" class="form-range" min="0" max="20" data-state-value="enemies">
+        <input type="number" class="form-control" data-state-value="enemies">
+        <br>
+        <p>You have {{{enemies}}} enemies left to kill.
+        <br>You have {{{friends}}} friends left to love.
+        <br>Summary of state: you have {{{enemies}}} enemies left to kill and {{{power}}} power!</p>
+
+        <br>        
+        <br>
+
+        <p>The value of the next slider defines the height of the next picture with zero JavaScript code! Again, no event listeners at all.</p>
+        <input type="range" class="form-range" min="20" max="200" value="100" data-state-value="sliderInputHeight">
+        <!-- <img src="YinYang.png" height="200" data-state-attribute='{"name":"John", "age":30, "city":"New York"}'> -->
+        <img id="Yin" src="YinYang.png" height="100" data-state-attribute-name="height" data-state-attribute-value="sliderInputHeight">
+        
+
+</div>
+</body>
+</html>
