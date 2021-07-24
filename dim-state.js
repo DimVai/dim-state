@@ -11,13 +11,14 @@ var State = {
      */
     stateVariables: [],
 
-    stateAttributes: {},
-
     /**
      * @type string[<string,string>]
      * All dependencies in this format: (sourceVariable, codeToRunIfChange)
      */
     stateDependencies: [[]],
+
+    /** the default value that is given in State variables when not defined */
+    defaultStateValue: null,
     
     /** 
      * The user can run State.setStateVarsPublic(), in order to use State Variables without using quotes.
@@ -34,7 +35,7 @@ var State = {
         },
 
      /** Initializes State Variables as State.properties, using DOM crowling*/  
-    create: function(variable, value) {
+    create: function(variable, value = this.defaultStateValue) {
         this["_"+variable] = value;
         this.updateDOMwithState(variable);
         Object.defineProperty(State, variable, {
@@ -52,11 +53,11 @@ var State = {
         if (window.jQuery){     //If jQuery
             let stateClass = ".state-" + variable;
             $(stateClass).html(State[variable]); 
-            try{$('[data-state-value='+variable+']').val(State[variable]);}catch{};
+            try{$('[data-state-value='+variable+']').val(State[variable]);}catch{}
             
             $('[data-state-attribute-value='+variable+']').each(function(e){
-               try{ $(this).attr( $(this).attr('data-state-attribute-name') , State[variable]);   }catch{};
-            })
+               try{ $(this).attr( $(this).attr('data-state-attribute-name') , State[variable]); }catch{}
+            });
 
         } else {                  //If not jQuery. Updates state only in text (not values or attributes)
             let stateClass = "state-" + variable;
@@ -89,24 +90,19 @@ var State = {
             if (dependency[0] == variable) {
                 // console.log(variable + " changed");
                 // console.log("dependency rule: " +r);
-                eval(dependency[2])
+                eval(dependency[2]);
             }
-        })
+        });
     },
-
-
 
 };
 
 
 
-
-
-
-//Does these things:
+//Does these things when file gets loaded:
 //Captures State Variables from DOM text 
-//Captures State Variables from data-state-value attributes
-//Formata DOM text to know where to put state value changes later
+//Captures State Variables from data-state-value and data-state-attribute-value attributes
+//Formats DOM text to know where to put state value changes later
 //
 (function setHTMLclasses(){
     let DOMvariables = /{{{(\w+)}}}/gi;
@@ -119,12 +115,13 @@ var State = {
 
     if (window.jQuery){
         //for every element that has data-state-value, *push* its value to the array
-        $('[data-state-value]').each(function(e){dataStateVariables.push($(this).attr('data-state-value'))})
-        $('[data-state-attribute-value]').each(function(e){dataStateVariables.push($(this).attr('data-state-attribute-value'))})
+        $('[data-state-value]').each(function(e){
+            dataStateVariables.push($(this).attr('data-state-value'))});
+        $('[data-state-attribute-value]').each(function(e){dataStateVariables.push($(this).attr('data-state-attribute-value'))});
     } 
     let stateVariables = uniqueArray([...textStateVariables, ...dataStateVariables]);
 
-    stateVariables.forEach(variable => {State.create(variable,null)})
+    stateVariables.forEach(variable => {State.create(variable,null)});
     State.stateVariables = stateVariables;
 
     document.body.innerHTML = document.body.innerHTML.replace(DOMvariables, '<span class="state-$1"></span>');
@@ -133,21 +130,13 @@ var State = {
 // Never use JavaScript's window.onload for these. It gets overritten by user's window.onload later! But you can use Query's $(window).on('load', ... 
 
 
-if (window.jQuery){     //If jQuery, 
-    $(window).on('load', function() {           //look for data-state-value and add event listners
-        $('[data-state-value]').on('input change',function(){
-            State[$(this).attr('data-state-value')] = $(this).val();
-        })
-
-        // $('[data-state-attribute-name]').each(function(e){
-        //     let attrName = $(this).attr('data-state-attribute-name');
-        //     let attrValue = $(this).attr('data-state-attribute-value');
-        //     let AttrObj = {}
-        //     AttrObj[attrName] = attrValue;
-        //     console.log(AttrObj);
-        // })
-
-      });
-
-}
-
+if (window.jQuery){     //If jQuery, initiate data-states
+    $(window).on('load', function() {           //set initial set values using html attributes add event listners to every data-state-value 
+        $('[data-state-value]').each(function(){
+            if ($(this).attr('value')) {State[$(this).attr('data-state-value')] ??= $(this).attr('value');}
+            // elem.attr('value') the initial value stated in html attribute "value". elem.val() the actual current value (input-range always has one!)
+            $(this).on('input change', function(){
+                try{ State[$(this).attr('data-state-value')] = $(this).val(); } catch{}
+            });
+    });
+})}

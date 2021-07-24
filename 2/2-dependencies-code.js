@@ -6,8 +6,8 @@
 State.setStateVariablesPublic();      
 
 //Initialize State Variables values and relationships  
-State.createDependency(power,[enemies,friends], `State[power] = 82 - 1*State[enemies] + 2*State[friends]; `);
-State.createDependency(friends,[enemies], `State[friends] = 9-State[enemies]; `);
+State.createDependency(power,[enemies,friends], `State[power] = 82 - 1*State[enemies] + 2*State[friends];`);
+State.createDependency(friends,[enemies], `State[friends] = 9-State[enemies];`);
 State[enemies]=7;
 //State[friends]=2;   //This is not needed any more because of dependency!
 

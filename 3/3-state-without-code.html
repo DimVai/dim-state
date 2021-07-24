@@ -11,7 +11,7 @@
 
     <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script defer src="../dim-state.js"></script>
-    <script defer src="3-state-without-code.js"></script>
+    <!-- <script defer src="3-state-without-code.js"></script> -->
 
 
 </head>
@@ -19,27 +19,33 @@
     <div class="container my-5 text-center" style="max-width: 800px;">
     
         <h1>Dim-state Game 3</h1>
-        <p>Example 3: Zero Javascript.
-            <br>All the "enemies", "friends" and "power" numbers in the page are syncronized with zero JavaScript code!<br>
-            We used Javascript only to set the dependencies between, "enemies", "friends" and "power" variables. 
-            There are no event listeners in our code. 
-        </p>
-        <p>Enemies: {{{enemies}}}</p>
-            <input type="range" class="form-range" min="0" max="20" data-state-value="enemies">
-        <input type="number" class="form-control" data-state-value="enemies">
+        <p>Example 3: State synchronization with zero Javascript.</p>
+
+        <h3>Enemies: {{{enemies}}}</h3>
+        <input type="text" class="form-control" value="27" data-state-value="enemies">
+        <input type="range" class="form-range" min="0" max="100" data-state-value="enemies">
         <br>
-        <p>You have {{{enemies}}} enemies left to kill.
-        <br>You have {{{friends}}} friends left to love.
-        <br>Summary of state: you have {{{enemies}}} enemies left to kill and {{{power}}} power!</p>
+        <p>You have {{{enemies}}} enemies left to kill.</p>
 
         <br>        
         <br>
 
-        <p>The value of the next slider defines the height of the next picture with zero JavaScript code! Again, no event listeners at all.</p>
-        <input type="range" class="form-range" min="20" max="200" value="100" data-state-value="sliderInputHeight">
-        <!-- <img src="YinYang.png" height="200" data-state-attribute='{"name":"John", "age":30, "city":"New York"}'> -->
-        <img id="Yin" src="YinYang.png" height="100" data-state-attribute-name="height" data-state-attribute-value="sliderInputHeight">
-        
+        <p>The value of the next slider defines the height of the next picture with zero JavaScript code! 
+            <br>Again, <b>no event listeners</b> at all. Just HTML for this.</p>
+        <input type="range" class="form-range" min="20" max="200" value="75" data-state-value="sliderInputHeight">
+        <img src="YinYang.png" height="100" data-state-attribute-name="height" data-state-attribute-value="sliderInputHeight">
+
+        <br>        
+        <br>
+        <br>
+
+        <!-- <input type="range" class="form-range m-2" min="1" max="3" value="3" data-state-value="Intelligence"> -->
+        <select class="form-select m-2" value="2" data-state-value="Intelligence">
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+        </select>
+        <input type="range" class="form-range m-2" min="1" max="3" value="3" data-state-value="Intelligence">
 
 </div>
 </body>
