@@ -140,3 +140,6 @@ if (window.jQuery){     //If jQuery, initiate data-states
             });
     });
 })}
+
+
+export default State;
