@@ -83,7 +83,7 @@ If you do not run `State.setStateVarsPublic()`, you have to use square brackets 
 ```
 
 ### _Note 2:_
-If you want to create a state variable in your JavaScript file (instead of creating using the default HTML way above), use the following method (this is not fully tested yet). To create, for example, a State variable `health` with a value `12`:
+If you want to create a State Variable in your JavaScript file (instead of creating using the default HTML way above), use the following method (this is not fully tested yet). To create, for example, a State variable `health` with a value `12`:
 ```JavaScript
 let health = 'health';      //so we do not use "health" in next line
 State.create(health,"12");  //(use "health" if you omit the previous line)
@@ -101,7 +101,7 @@ State[enemies]=7;
 In the first line, we declare that the variable `power` depends  on  `enemies` and `friends` using the relationship: `State[power] = 82 - 1*State[enemies] + 2*State[friends]; `. In the next line, we declare that the variable `friends` depends on `enemies` using the relationship: `State[friends] = 9-State[enemies];` The third argument must be a valid javascript code that gets executed when one of the variables in square brackets change. 
 <br> In the third line we initialize `enemies` only. `friends` and `power` don't need initialization. They get their values according to the rules we just defined.
 
-## **How to use - Level 3A : State in HTML without Javascript code**
+## **How to use - Level 3A : State in HTML inputs without Javascript code**
 Using `dim-state.js` and `jQuery` we can synchronize things in HTML code, **without writing any JavaScript** code or event listeners. This works on every HTML item that has a `value` property, like `input`,`select` e.t.c.
 <br>Note: You have to load `jQuery` before dim-state.js to use the examples in Level 3A and 3B:
 ```HTML
@@ -114,16 +114,16 @@ Now, Take a look at the third example (folder 3). **There is no custom `.js` fil
         <input type="range" data-state-value="enemies" value="27">
         <input type="number" data-state-value="enemies">
 ```
-The two statements `data-state-value="enemies"` is how we declare that the value of the two inputs (input-range and input-text/number) must always be equal to the variable `enemies`, which is always displayed in the `{{{enemies}}}` position. We set the attribute `value="27"` in one (either) of them, so the initial value of `enemies` should be `27`. No need for JavaScript code. Everything is synchronized automatically.
+The two attributes `data-state-value="enemies"` is how we declare that the value of the two inputs (input-range and input-text/number) must always be equal to the variable `enemies`, which is always displayed in the `{{{enemies}}}` position. We set the attribute `value="27"` in one (either) of them, so the initial value of `enemies` should be `27`. No need for JavaScript code. Everything is synchronized automatically.
 
 ### _Note: Initial values in multiple synchronized inputs_
-If different inputs (with the same `data-state-value` attribute) have different initial values (`value` attribute), it is not determined which value attribute will ultimately became the State Variable's value. Also, If you do not set any `value` attributes at all, the inputs won't get synchronized initially. So the advice is:
+If different inputs (with the same `data-state-value` attribute) have different initial values (`value` attribute), it is unknown which value attribute will ultimately became the State Variable's value. Also, If you do not set any `value` attributes at all, the inputs won't get synchronized initially. So the advice is:
 * Declare only one `value` attribute in your synchronized inputs. 
-* Optionally/alternatively, initiate the variable in your .js file using `State[variable]="value".` This will override any `value` attributes from the HTML.  
+* Optionally/alternatively, initiate the variable in your .js file using `State[variable]="value".` This will override any `value` that is declared in HTML attributes.  
 
 
 ## **How to use - Level 3B : State in HTML Attributes**
-In the same page there is a slider and an image. We synchronize the value of the slider to the height of the image: 
+In the same page there is a slider and an image. We synchronize the `value` of the slider to the `height` of the image: 
 ```HTML
 <input type="range" 
     value="100" 

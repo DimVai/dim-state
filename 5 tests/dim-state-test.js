@@ -134,10 +134,11 @@ if (window.jQuery){     //If jQuery, initiate data-states
     $(window).on('load', function() {           //set initial set values using html attributes add event listeners to every data-state-value 
         $('[data-state-value]').each(function(){
             if ($(this).attr('value')) {State[$(this).attr('data-state-value')] ??= $(this).attr('value');}
-            // elem.attr('value') the initial value stated in html attribute "value". elem.val() the actual current value (input-range always has one!)
             let updateStateValue = () => {try{ State[$(this).attr('data-state-value')] = $(this).val(); } catch{}}
-            $(this).on('input change', function(){
-                //ExecuteAfterRapidFire(updateStateValue());
+            // elem.attr('value') the initial value stated in html attribute "value". elem.val() the actual current value (input-range always has one!)
+
+            $(this).on('input', function(){
+                ExecuteAfterRapidFire(updateStateValue);
             });
     });
 })}
@@ -145,9 +146,8 @@ if (window.jQuery){     //If jQuery, initiate data-states
 
 
 
-
 let Executions = {};
-let lastWord = str => {
+var lastWord = str => {
     let words = str.split(" ");
     return words[words.length-1];
   }; 
