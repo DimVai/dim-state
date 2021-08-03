@@ -1,4 +1,4 @@
-/* jshint unused:false , strict:global */
+/* jshint unused:false , strict:global , esversion: 10 */
 /* RUN BEFORE ANY EVENT LISTENERS OR FUNCTION THAT CHANGE STATE VARIABLES */
 "use strict"; 
 
@@ -90,7 +90,7 @@ var State = {
             if (dependency[0] == variable) {
                 // console.log(variable + " changed");
                 // console.log("dependency rule: " +r);
-                eval(dependency[2]);
+                eval(dependency[2]);        // jshint ignore:line
             }
         });
     },
@@ -133,8 +133,8 @@ var State = {
 if (window.jQuery){     //If jQuery, initiate data-states
     $(window).on('load', function() {           //set initial set values using html attributes add event listeners to every data-state-value 
         $('[data-state-value]').each(function(){
-            if ($(this).attr('value')) {State[$(this).attr('data-state-value')] ??= $(this).attr('value');}
-            let updateStateValue = () => {try{ State[$(this).attr('data-state-value')] = $(this).val(); } catch{}}
+            if ($(this).attr('value')) {State[$(this).attr('data-state-value')] ??= $(this).attr('value');}     // jshint ignore:line
+            let updateStateValue = () => {try{ State[$(this).attr('data-state-value')] = $(this).val(); } catch{}};
             // elem.attr('value') the initial value stated in html attribute "value". elem.val() the actual current value (input-range always has one!)
 
             $(this).on('input', function(){
