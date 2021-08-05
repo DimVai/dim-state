@@ -1,7 +1,15 @@
+/**
+ * @file dim-state.
+ * @copyright Dimitris Vainanidis 2021
+ */
+
 /* jshint unused:false , strict:global , esversion: 10 */
 /* RUN BEFORE ANY EVENT LISTENERS OR FUNCTION THAT CHANGE STATE VARIABLES */
 "use strict"; 
 
+/**
+ * @author Jane Smith <jsmith@example.com>
+ */
 
 /** A public object that contains all State Variables */
 var State = {
@@ -39,7 +47,7 @@ var State = {
 
      /** Initializes State Variables as State.properties, using DOM crawling*/  
     create: function(variable, value = this.defaultStateValue) {
-        this["_"+variable] = value;
+        this["_"+variable] = value;     //use _ to bypass known issue with infinite recurssion with "set"... 
         this.updateDOMwithState(variable);
         Object.defineProperty(State, variable, {
             set: function(value) { 
@@ -119,8 +127,8 @@ var State = {
     let textStateVariables = ( (document.body.innerHTML).match(DOMvariables) || [] ).map(e => e.replace(unwantedChars, ''));
     let dataStateVariables = [];
 
+    //for every element that has data-state-value or data-state-attribute-value, *push* its value to the array
     if (window.jQuery){
-        //for every element that has data-state-value, *push* its value to the array
         $('[data-state-value]').each(function(e){
             dataStateVariables.push($(this).attr('data-state-value'));
         });
@@ -132,11 +140,12 @@ var State = {
         document.querySelectorAll('[data-state-attribute-value]').forEach(function(element){dataStateVariables.push(element.getAttribute('data-state-attribute-value'))});
     }
 
+    //the unique array of what we gathered from HTML. Create State variables
     let stateVariables = uniqueArray([...textStateVariables, ...dataStateVariables]);
-
     stateVariables.forEach(variable => {State.create(variable,null)});
     State.stateVariables = stateVariables;
 
+    //Make DOM Ready for State changes
     document.body.innerHTML = document.body.innerHTML.replace(DOMvariables, '<span class="state-$1"></span>');
 })();  //execute it also!
 
@@ -162,7 +171,6 @@ if (window.jQuery){     //If jQuery, initiate data-states
             element.addEventListener('input', function(){updateStateValue()});
             element.addEventListener('change', function(){updateStateValue()});
         });
-
     });
 }
 
