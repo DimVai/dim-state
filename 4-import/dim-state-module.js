@@ -2,9 +2,11 @@
 /* RUN BEFORE ANY EVENT LISTENERS OR FUNCTION THAT CHANGE STATE VARIABLES */
 "use strict"; 
 
+
 /** A public object that contains all State Variables */
 var State = {
     
+
     /** 
      * @type string[]
      * All State Variables in an array 
@@ -21,8 +23,8 @@ var State = {
     defaultStateValue: null,
     
     /** 
-     * The user can run State.setStateVarsPublic(), in order to use State Variables without using quotes.
-     * (It does not create State.properties from DOM.)
+     * The user can run State.setStateVarsPublic() in order to use State Variables without using quotes.
+     * (Only for ariables that have already been inserted in State.stateVariables)
     */
     setStateVariablesPublic: function() {
         this.stateVariables.map( e => {
@@ -33,6 +35,7 @@ var State = {
                 })}
             });
         },
+
 
      /** Initializes State Variables as State.properties, using DOM crawling*/  
     create: function(variable, value = this.defaultStateValue) {
@@ -54,17 +57,22 @@ var State = {
             let stateClass = ".state-" + variable;
             $(stateClass).html(State[variable]); 
             try{$('[data-state-value='+variable+']').val(State[variable]);}catch{}
-            
             $('[data-state-attribute-value='+variable+']').each(function(e){
                try{ $(this).attr( $(this).attr('data-state-attribute-name') , State[variable]); }catch{}
             });
 
-        } else {                  //If not jQuery. Updates state only in text (not values or attributes)
+        } else {         
             let stateClass = "state-" + variable;
             let classes = document.getElementsByClassName(stateClass);
             for (let i = 0; i < classes.length; i++) {
                 classes[i].innerHTML = State[variable];
                 }
+            document.querySelectorAll('[data-state-value='+variable+']').forEach(function(element){
+                try{element.value = State[variable]}catch{}
+            });
+            document.querySelectorAll('[data-state-attribute-value='+variable+']').forEach(function(element){
+                try{ element.setAttribute( element.getAttribute('data-state-attribute-name') , State[variable]); }catch{}
+             });
         }
     },
 
@@ -88,9 +96,7 @@ var State = {
     updateDependencies: function(variable){
         this.stateDependencies.forEach((dependency,r) => {
             if (dependency[0] == variable) {
-                // console.log(variable + " changed");
-                // console.log("dependency rule: " +r);
-                eval(dependency[2]);        // jshint ignore:line
+                eval(dependency[2]);            // jshint ignore:line
             }
         });
     },
@@ -116,9 +122,16 @@ var State = {
     if (window.jQuery){
         //for every element that has data-state-value, *push* its value to the array
         $('[data-state-value]').each(function(e){
-            dataStateVariables.push($(this).attr('data-state-value'))});
+            dataStateVariables.push($(this).attr('data-state-value'));
+        });
         $('[data-state-attribute-value]').each(function(e){dataStateVariables.push($(this).attr('data-state-attribute-value'))});
-    } 
+    } else {
+        document.querySelectorAll('[data-state-value]').forEach(function(element){
+            dataStateVariables.push(element.getAttribute('data-state-value'));
+        });
+        document.querySelectorAll('[data-state-attribute-value]').forEach(function(element){dataStateVariables.push(element.getAttribute('data-state-attribute-value'))});
+    }
+
     let stateVariables = uniqueArray([...textStateVariables, ...dataStateVariables]);
 
     stateVariables.forEach(variable => {State.create(variable,null)});
@@ -127,61 +140,32 @@ var State = {
     document.body.innerHTML = document.body.innerHTML.replace(DOMvariables, '<span class="state-$1"></span>');
 })();  //execute it also!
 
-// Never use JavaScript's window.onload for these. It gets overwritten by user's window.onload later! But you can use Query's $(window).on('load', ... 
 
-
+//set initial set values based on html attributes and html values. Next, add event listeners to every related element 
 if (window.jQuery){     //If jQuery, initiate data-states
-    $(window).on('load', function() {           //set initial set values using html attributes add event listeners to every data-state-value 
+    $(window).on('load', function() {           
         $('[data-state-value]').each(function(){
             if ($(this).attr('value')) {State[$(this).attr('data-state-value')] ??= $(this).attr('value');}     // jshint ignore:line
-            let updateStateValue = () => {try{ State[$(this).attr('data-state-value')] = $(this).val(); } catch{}};
             // elem.attr('value') the initial value stated in html attribute "value". elem.val() the actual current value (input-range always has one!)
-
-            $(this).on('input', function(){
-                ExecuteAfterRapidFire(updateStateValue);
+            let updateStateValue = () => {try{ State[$(this).attr('data-state-value')] = $(this).val(); } catch{}};
+            $(this).on('input change', function(){
+                updateStateValue();
             });
+        });
     });
-})}
+} else {
+    window.addEventListener("load", function() {           
+        document.querySelectorAll('[data-state-value]').forEach(function(element){
+            if (element.getAttribute('value')) {State[element.getAttribute('data-state-value')] ??= element.getAttribute('value');}     // jshint ignore:line
+            //element.getAttribute('value') is the initial value stated in html attribute "value". element.value is the actual current value (input-range always has one!)
+            let updateStateValue = () => {try{ State[element.getAttribute('data-state-value')] = element.value } catch{}};
+            element.addEventListener('input', function(){updateStateValue()});
+            element.addEventListener('change', function(){updateStateValue()});
+        });
+
+    });
+}
 
 
 
-
-let Executions = {};
-var lastWord = str => {
-    let words = str.split(" ");
-    return words[words.length-1];
-  }; 
-
-
-/** Executes the function only once, even if you call it multiple times 
- *  How to use: executeOnce(update), executeOnce(notify.bind(this."error"))
-*/
-function executeOnce(func) {
-    let functionName = lastWord(func.name);   //the last word (bind problems)
-    if (!Executions[functionName]) {
-      Executions[functionName]="true";
-      func();
-      //show({Executions.toString()});
-    }
-  }
-
-/** Executes the function with minimum interval, even if you call it more often 
- *  How to use: executeSparsely(update,2000), executeSparsely(notify.bind(this."error"),2000)
- */
-function executeSparsely(func, minInterval=1000){
-    let functionName = lastWord(func.name);   //the last word (bind problems)
-    if (!Executions[functionName]) {
-      func();
-      Executions[functionName]=true;
-      setTimeout(()=> Executions[functionName]=false , minInterval);
-    }
-  }
-
-/** Executes the function only after it has stopped being called for an interval
- *  How to use: ExecuteAfterRapidFire(update,500), ExecuteAfterRapidFire(notify.bind(this."error"),500)
- */
-function ExecuteAfterRapidFire(func, pauseWait=200){
-    let functionName = lastWord(func.name);   //the last word (bind problems)  
-    clearTimeout(Executions[functionName]);
-    Executions[functionName] = setTimeout(func,pauseWait);
-  }
+export default State;

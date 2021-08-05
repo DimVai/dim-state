@@ -1,4 +1,5 @@
 /* jshint unused:false , strict:global */
+// jshint ignore: start
 "use strict"; 
 
 import Statue from './dim-state-module.js';
@@ -15,6 +16,7 @@ Statue.setStateVariablesPublic();
 // State.createDependency(friends,[enemies], `State[friends] = 100-State[enemies]; `);
 //State.createDependency(sliderInputHeightX2, [sliderInputHeight],`State[sliderInputHeightX2] = State[sliderInputHeight]*2`)
 let log = console.log;
+log({Statue});
 log(Statue[enemies])
 Statue[enemies]=14;
 log(Statue[enemies])
