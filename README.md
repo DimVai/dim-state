@@ -16,7 +16,7 @@ _Important note_: Load this script:
 
 This, will create a **public Object** named `State` or `window.State`. 
 
-*As an alternative* (not recommended for now), you can import the `dim-state-module.js` (located in folder 4) *as a module*, but its functionality is not tested or supported fully. This way, you can also change the name of the public Object
+*As an alternative* (not recommended for now), you can import the `dim-state-module.js` (located in folder 4) *as a module*, but its functionality is not fully tested or supported. This way, you can also change the name of the State Object:
 ```JavaScript
     import StateWithWhateverNameYouWant from './dim-state-module.js';
 ```
