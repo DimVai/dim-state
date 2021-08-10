@@ -1,15 +1,13 @@
 /**
  * @file dim-state.
- * @copyright Dimitris Vainanidis 2021
+ * @author Dimitris Vainanidis
+ * @copyright Dimitris Vainanidis, 2021
  */
 
 /* jshint unused:false , strict:global , esversion: 10 */
 /* RUN BEFORE ANY EVENT LISTENERS OR FUNCTION THAT CHANGE STATE VARIABLES */
 "use strict"; 
 
-/**
- * @author Jane Smith <jsmith@example.com>
- */
 
 /** A public object that contains all State Variables */
 var State = {
