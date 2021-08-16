@@ -1,25 +1,23 @@
 /**
  * @file dim-state.
- * @copyright Dimitris Vainanidis 2021
+ * @author Dimitris Vainanidis
+ * @copyright Dimitris Vainanidis, 2021
  */
 
 /* jshint unused:false , strict:global , esversion: 10 */
 /* RUN BEFORE ANY EVENT LISTENERS OR FUNCTION THAT CHANGE STATE VARIABLES */
 "use strict"; 
 
-/**
- * @author Jane Smith <jsmith@example.com>
- */
 
 /** A public object that contains all State Variables */
 var State = {
     
 
     /** 
-     * @type string[]
-     * All State Variables in an array 
+     * @type Set<string>
+     * All State Variables in a map 
      */
-    stateVariables: [],
+    stateVariables: new Set(),
 
     /**
      * @type string[<string,string>]
@@ -30,33 +28,64 @@ var State = {
     /** the default value that is given in State variables when not defined */
     defaultStateValue: null,
     
+    /** Shows if the State Variables are public (window) variables */
+    areStateVariablesPublic: false,
+
+    localStorageVariables: new Set(),
+    sessionStorageVariables: new Set(),
+
     /** 
      * The user can run State.setStateVarsPublic() in order to use State Variables without using quotes.
-     * (Only for ariables that have already been inserted in State.stateVariables)
+     * (Only for variables that have already been inserted in State.stateVariables)
     */
     setStateVariablesPublic: function() {
-        this.stateVariables.map( e => {
+        this.stateVariables.forEach( e => {
             if (!window[e]) {
                 Object.defineProperty(window,e,{
                     value: e,
                     writable: false,
                 })}
             });
+        //console.debug('State variables are now public.');
+        this.areStateVariablesPublic = true;
         },
 
 
-     /** Initializes State Variables as State.properties, using DOM crawling*/  
+     /** Initializes State Variables as State.properties, using DOM crawling or called by user*/  
     create: function(variable, value = this.defaultStateValue) {
-        this["_"+variable] = value;     //use _ to bypass known issue with infinite recurssion with "set"...  
+        this["_"+variable] = value;     //use _ to bypass known issue with infinite recursion with "set"... 
         this.updateDOMwithState(variable);
+        this.stateVariables.add(variable); //it is a set
         Object.defineProperty(State, variable, {
             set: function(value) { 
                 this["_"+variable] = value; 
+                //console.log('set');
+                if (this.sessionStorageVariables.has(variable)) {sessionStorage[variable] = value}
+                if (this.localStorageVariables.has(variable)) {localStorage[variable] = value}
                 this.updateDOMwithState(variable);
                 this.updateDependencies(variable);
             },
             get: function() { return this["_"+variable] },
           });
+    },
+
+    synchronize: function(variable,storageType) {
+        if (storageType=="localStorage") {
+            this.localStorageVariables.add(variable);
+            if (typeof localStorage[variable] === 'undefined') {
+                localStorage[variable] = this[variable]||'';
+            } else {
+                this[variable] = localStorage[variable];
+            }
+        }
+        else if (storageType=="sessionStorage") {
+            this.sessionStorageVariables.add(variable);
+            if (typeof sessionStorage[variable] === 'undefined') {
+                sessionStorage[variable] = this[variable]||'';
+            } else {
+                this[variable] = sessionStorage[variable];
+            }
+        }
     },
         
     /** Searches corresponding classes in DOM and updates their value */
@@ -129,21 +158,21 @@ var State = {
 
     //for every element that has data-state-value or data-state-attribute-value, *push* its value to the array
     if (window.jQuery){
-        $('[data-state-value]').each(function(e){
-            dataStateVariables.push($(this).attr('data-state-value'));
-        });
+        $('[data-state-value]').each(function(e){dataStateVariables.push($(this).attr('data-state-value'))});
         $('[data-state-attribute-value]').each(function(e){dataStateVariables.push($(this).attr('data-state-attribute-value'))});
     } else {
         document.querySelectorAll('[data-state-value]').forEach(function(element){
             dataStateVariables.push(element.getAttribute('data-state-value'));
         });
-        document.querySelectorAll('[data-state-attribute-value]').forEach(function(element){dataStateVariables.push(element.getAttribute('data-state-attribute-value'))});
+        document.querySelectorAll('[data-state-attribute-value]').forEach(function(element){
+            dataStateVariables.push(element.getAttribute('data-state-attribute-value'));
+        });
     }
 
     //the unique array of what we gathered from HTML. Create State variables
     let stateVariables = uniqueArray([...textStateVariables, ...dataStateVariables]);
     stateVariables.forEach(variable => {State.create(variable,null)});
-    State.stateVariables = stateVariables;
+    //State.stateVariables = stateVariables;        //this happens on "create" method
 
     //Make DOM Ready for State changes
     document.body.innerHTML = document.body.innerHTML.replace(DOMvariables, '<span class="state-$1"></span>');
@@ -173,6 +202,15 @@ if (window.jQuery){     //If jQuery, initiate data-states
         });
     });
 }
+
+//if user has set var StatePublicVariables = false; , do not make public variables 
+if (typeof StatePublicVariables === 'undefined' || StatePublicVariables) {State.setStateVariablesPublic()}      // jshint ignore:line
+
+
+//inform the developer in the console for non public variables. 
+setTimeout(()=>{
+    if (!State.areStateVariablesPublic) {console.debug('State variables are not public. You must use quotation marks to access them. ')}
+},3000);
 
 
 export default State;
