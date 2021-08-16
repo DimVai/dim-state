@@ -84,7 +84,7 @@ State.create(health,"12");  //(use "health" if you omit the previous line)
 <hr>
 <hr>
 
-# **How to use - Level 2: LocalStorage and SessionStorage**
+# **How to use - Level 2, LocalStorage and SessionStorage**
 You can syncronize your State Variables with the `LocalStorage` or `SessionStorage`. At any point (preferably, in the beginning, when the page loads), run:
 ```JavaScript
 State.synchronize(enemies,"localStorage")
@@ -96,7 +96,7 @@ If there are values already stored in `localStorage` or `sessionStorage`, they w
 <hr>
 
 
-# **How to use - Level 3: Use Dependencies**
+# **How to use - Level 3, Use Dependencies**
 You can set dependencies between your variables. So, if one gets updated, all the others get update automatically.
 <br>In this example (folder 2), we use the command `State.createDependency()`. 
 
@@ -111,7 +111,7 @@ In the first line, we declare that the variable `power` depends  on  `enemies` a
 <hr>
 <hr>
 
-# **How to use - Level 4A : State in HTML inputs without JavaScript code**
+# **How to use - Level 4A, State in HTML inputs without JavaScript code**
 Using `dim-state.js`, we can synchronize things in HTML code, **without writing any JavaScript** code or event listeners. This works on every HTML item that has a `value` property, like `input`,`select` e.t.c.
 Take a look at the third example (folder 3). **There is no custom `.js` file**. Just HTML! Among other things, HTML contains this code:
 ```HTML
@@ -127,7 +127,7 @@ If different inputs (with the same `data-state-value` attribute) have different 
 * Optionally/alternatively, initiate the variable in your .js file using `State[variable]="value".` This will override any `value` that is declared in HTML attributes.  
 
 
-# **How to use - Level 4B : State in HTML Attributes**
+# **How to use - Level 4B, State in HTML Attributes**
 In the same page there is a slider and an image. We synchronize the `value` of the slider to the `height` of the image: 
 ```HTML
 <input type="range" 
