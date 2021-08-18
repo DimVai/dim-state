@@ -17,7 +17,7 @@ var State = {
      * @type Set<string>
      * All State Variables in a map 
      */
-    stateVariables: new Set(),
+    stateVariables: new Set,
 
     /**
      * @type string[<string,string>]
@@ -31,8 +31,8 @@ var State = {
     /** Shows if the State Variables are public (window) variables */
     areStateVariablesPublic: false,
 
-    localStorageVariables: new Set(),
-    sessionStorageVariables: new Set(),
+    localStorageVariables: new Set,
+    sessionStorageVariables: new Set,
 
     /** 
      * The user can run State.setStateVarsPublic() in order to use State Variables without using quotes.
@@ -48,7 +48,8 @@ var State = {
             });
         //console.debug('State variables are now public.');
         this.areStateVariablesPublic = true;
-        },
+        return this.stateVariables;
+    },
 
 
      /** Initializes State Variables as State.properties, using DOM crawling or called by user*/  
@@ -67,6 +68,7 @@ var State = {
             },
             get: function() { return this["_"+variable] },
           });
+          return value;
     },
 
     synchronize: function(variable,storageType) {
@@ -86,6 +88,7 @@ var State = {
                 this[variable] = sessionStorage[variable];
             }
         }
+        return State[variable];
     },
         
     /** Searches corresponding classes in DOM and updates their value */
@@ -97,13 +100,10 @@ var State = {
             $('[data-state-attribute-value='+variable+']').each(function(e){
                try{ $(this).attr( $(this).attr('data-state-attribute-name') , State[variable]); }catch{}
             });
-
         } else {         
             let stateClass = "state-" + variable;
-            let classes = document.getElementsByClassName(stateClass);
-            for (let i = 0; i < classes.length; i++) {
-                classes[i].innerHTML = State[variable];
-                }
+            /* without "[...]", it is not an array, but a nodeList (can't use forEach!)*/
+            [...document.getElementsByClassName(stateClass)].forEach(element => element.innerHTML = State[variable]);
             document.querySelectorAll('[data-state-value='+variable+']').forEach(function(element){
                 try{element.value = State[variable]}catch{}
             });
@@ -111,6 +111,7 @@ var State = {
                 try{ element.setAttribute( element.getAttribute('data-state-attribute-name') , State[variable]); }catch{}
              });
         }
+        return State[variable];
     },
 
 
@@ -124,6 +125,7 @@ var State = {
         dependenciesArray.forEach(dependency => { 
             this.stateDependencies.push([dependency,variable,AssignmentsAsString]);
         });
+        return State[variable];
     },
 
     /**
@@ -136,6 +138,7 @@ var State = {
                 eval(dependency[2]);            // jshint ignore:line
             }
         });
+        return State[variable];
     },
 
 };
@@ -165,7 +168,7 @@ var State = {
             dataStateVariables.push(element.getAttribute('data-state-value'));
         });
         document.querySelectorAll('[data-state-attribute-value]').forEach(function(element){
-            dataStateVariables.push(element.getAttribute('data-state-attribute-value'));    
+            dataStateVariables.push(element.getAttribute('data-state-attribute-value'))
         });
     }
 
@@ -204,7 +207,7 @@ if (window.jQuery){     //If jQuery, initiate data-states
 }
 
 //if user has set var StatePublicVariables = false; , do not make public variables 
-if (typeof StatePublicVariables === 'undefined' || StatePublicVariables) {State.setStateVariablesPublic()}  // jshint ignore:line
+if (typeof StatePublicVariables === 'undefined' || StatePublicVariables) {State.setStateVariablesPublic()}
 
 
 //inform the developer in the console for non public variables. 

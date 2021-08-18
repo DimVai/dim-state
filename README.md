@@ -87,7 +87,7 @@ State.create(health,"12");  //(use "health" if you omit the previous line)
 # **How to use - Level 2, LocalStorage and SessionStorage**
 You can syncronize your State Variables with the `LocalStorage` or `SessionStorage`. At any point (preferably, in the beginning, when the page loads), run:
 ```JavaScript
-State.synchronize(enemies,"localStorage")
+State.synchronize(enemies,"localStorage");
 State.synchronize(health,"sessionStorage");
 ```
 If there are values already stored in `localStorage` or `sessionStorage`, they will override any value that State Variable has at this point. From this point on, every State Variable that changes, it also updates the `localStorage` or `sessionStorage`. 
@@ -101,11 +101,11 @@ You can set dependencies between your variables. So, if one gets updated, all th
 <br>In this example (folder 2), we use the command `State.createDependency()`. 
 
 ```JavaScript
-State.createDependency(power,[enemies,friends], 'State[power] = 82 - 1*State[enemies] + 2*State[friends];');
-State.createDependency(friends,[enemies], 'State[friends] = 9-State[enemies];');
+State.createDependency(power,[enemies,friends], 'State[power] = 82-State[enemies]+2*State[friends]');
+State.createDependency(friends,[enemies], 'State[friends] = 9-State[enemies]');
 State[enemies]=7;
 ```
-In the first line, we declare that the variable `power` depends  on  `enemies` and `friends` using the relationship: `State[power] = 82 - 1*State[enemies] + 2*State[friends]; `. In the next line, we declare that the variable `friends` depends on `enemies` using the relationship: `State[friends] = 9-State[enemies];` The third argument must be a valid JavaScript code that gets executed when one of the variables in square brackets change. 
+In the first line, we declare that the variable `power` depends  on  `enemies` and `friends` using the relationship: `State[power] = 82-State[enemies]+2*State[friends]; `. In the next line, we declare that the variable `friends` depends on `enemies` using the relationship: `State[friends] = 9-State[enemies];` The third argument must be a valid JavaScript code that gets executed when one of the variables in square brackets change. 
 <br> In the third line we initialize `enemies` only. `friends` and `power` don't need initialization. They get their values according to the rules we just defined.
 
 <hr>
@@ -148,7 +148,7 @@ Expanding the last example, we could have set the image's `data-state-attribute-
 State.createDependency(
     sliderInputHeightX2, 
     [sliderInputHeight],
-    'State[sliderInputHeightX2] = State[sliderInputHeight]*2')
+    'State[sliderInputHeightX2] = State[sliderInputHeight]*2');
 ```
 This way, the height of the image is always double the value of the slider. Try it yourself!
 
@@ -173,7 +173,7 @@ The properties of the `State` are the single point of truth for the State Variab
 
 But, when you set or change the variable, not only does it update the property, but it also updates the text inside every span with `class="state-enemies"` ! So, you don't need to babysit the DOM on every variable change. 
 
-### **Level 2: creating and updating dependencies**
+### **Level 3: creating and updating dependencies**
 When you declare a dependency, dim-state.js creates a record in `State.stateDependencies` sub-object. Using, our examples,
 ```JavaScript
 State.createDependency(power,[enemies,friends], `...code...`);
@@ -185,5 +185,5 @@ becomes the two records:
 ```
 So, when `friends` changes, the program knows (second line above) that it must execute the `...code...`, so `power` will get updated instantly. The first argument on `State.createDependency` doesn't play any role at all (!!!), but it improves the readability of the user's code!
 
-### **Level 3: HTML State without JavaScript**
+### **Level 4: HTML State without JavaScript**
 `dim-state.js`, not only includes variables in brackets (like `{{{something}}}`) in the `State` object, but also includes variables that it finds in `data-state-value="something"` and in `data-state-attribute-value="somethingElse"` attributes. In case of an HTML input and `data-state-value`, it also adds an event listener to the element, so, every time the input changes, the State Variable gets updated too. On the other side, when every State Variable changes, the programs checks all HTML elements with these attributes (even if they do not exist), and update their value or attribute respectively.
