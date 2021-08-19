@@ -1,9 +1,10 @@
-/* jshint unused:false , strict:global */
+// jshint ignore: start
 "use strict"; 
 
+var State = window.State;
 
-//Execute this line if you want to access state variables without quotes. 
-State.setStateVariablesPublic();      
+//Execute this line if you want to access state variables without quotes.      
+//var StatePublicVariables = false;
 
 //Initialize State Variables values and relationships  
 State.createDependency(power,[enemies,friends], `State[power] = 82 - 1*State[enemies] + 2*State[friends];`);

@@ -85,7 +85,7 @@ State.create(health,"12");  //(use "health" if you omit the previous line)
 <hr>
 
 # **How to use - Level 2, LocalStorage and SessionStorage**
-You can syncronize your State Variables with the `LocalStorage` or `SessionStorage`. At any point (preferably, in the beginning, when the page loads), run:
+You can synchronize your State Variables with the `LocalStorage` or `SessionStorage`. At any point (preferably, in the beginning, when the page loads), run:
 ```JavaScript
 State.synchronize(enemies,"localStorage");
 State.synchronize(health,"sessionStorage");
@@ -163,15 +163,15 @@ At this time and version, if something is not working correctly, try to load jQu
 
 # How it works behind the scenes. Technical Stuff...
 ### **Level 1: creating and updating State Variables**
-When `dim-state.js` loads, it accesses your html, and changes your `{{{}}}` variables with a `span` with the appropriate class. For example, it will change `{{{friends}}}` with the following HTML object (with blank innerText at the moment):
+When `dim-state.js` loads, it accesses your html, and changes your `{{{}}}` variables with a `span` with the appropriate attribute. For example, it will change `{{{friends}}}` with the following HTML object (with blank innerText at the moment):
 ```JavaScript
-<span class="state-enemies"></span>
+<span data-state-variable="enemies"></span>
 ```
 Moreover, it will create the property `State.friends` in the public object `State` that will be created. The `State` object has various properties and methods in order to work, but it certainly contains all the State Variables (names and values) as properties (names and values). 
 
 The properties of the `State` are the single point of truth for the State Variables using `dim-state.js`.
 
-But, when you set or change the variable, not only does it update the property, but it also updates the text inside every span with `class="state-enemies"` ! So, you don't need to babysit the DOM on every variable change. 
+so, when you set or change the variable, not only does it update the property, but it also updates the text inside every span with `data-state-variable="enemies"` ! So, you don't need to babysit the DOM on every variable change. 
 
 ### **Level 3: creating and updating dependencies**
 When you declare a dependency, dim-state.js creates a record in `State.stateDependencies` sub-object. Using, our examples,
@@ -187,3 +187,12 @@ So, when `friends` changes, the program knows (second line above) that it must e
 
 ### **Level 4: HTML State without JavaScript**
 `dim-state.js`, not only includes variables in brackets (like `{{{something}}}`) in the `State` object, but also includes variables that it finds in `data-state-value="something"` and in `data-state-attribute-value="somethingElse"` attributes. In case of an HTML input and `data-state-value`, it also adds an event listener to the element, so, every time the input changes, the State Variable gets updated too. On the other side, when every State Variable changes, the programs checks all HTML elements with these attributes (even if they do not exist), and update their value or attribute respectively.
+
+### Recap of all `data-state-*` HTML attributes:
+
+* `data-state-variable`
+<br>A single span that holds only the value of a state variable. This is created automatically, you don't need to create those. 
+* `data-state-value`
+<br>An element that has an input value (eg, a text input or a range input), and its value is synchronized with this State Variable. 
+* `data-state-attribute-name` and `data-state-attribute-value`
+<br>These go together. It indicates that the attribute of the element is synchronized with the appropriate State Variable. 
