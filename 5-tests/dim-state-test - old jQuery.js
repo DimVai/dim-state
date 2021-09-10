@@ -11,8 +11,8 @@
 
 /** A public object that contains all State Variables */
 var State = {
-
     
+
     /** 
      * @type Set<string>
      * All State Variables in a map 
@@ -31,14 +31,11 @@ var State = {
     /** Shows if the State Variables are public (window) variables */
     areStateVariablesPublic: false,
 
-    /** The set of variables that are synchronized with localStorage */
+    /** The set of variables that are syncronized with localStorage */
     localStorageVariables: new Set(),
 
-    /** The set of variables that are synchronized with sessionStorage */
+    /** The set of variables that are syncronized with sessionStorage */
     sessionStorageVariables: new Set(),
-
-    /** Returns if State[variable] has a valid value (not null or undefined) */
-    hasValue: function(stateVariable) {return this[stateVariable] != null},
 
     /** 
      * The user can run State.setStateVarsPublic() in order to use State Variables without using quotes.
@@ -60,6 +57,7 @@ var State = {
     /** Initializes State Variables as State.properties, using DOM crawling or called by user*/  
     create: function(variable, value = this.defaultStateValue) {
         this["_"+variable] = value;     //use _ to bypass known issue with infinite recursion with "set"... 
+        this.updateDOMwithState(variable);
         this.stateVariables.add(variable); //it is a set
         Object.defineProperty(State, variable, {
             set: function(value) { 
@@ -71,9 +69,8 @@ var State = {
                 this.updateDependencies(variable);
             },
             get: function() { return this["_"+variable] },
-        });
-        this.updateDOMwithState(variable);      //is it really needed? maybe during creation via Javascript (not html)??? 
-        return value;
+          });
+          return value;
     },
 
     synchronize: function(variable,storageType) {
@@ -98,16 +95,24 @@ var State = {
         
     /** Searches corresponding classes in DOM and updates their value */
     updateDOMwithState: function(variable){
-        if (this.hasValue(variable)) {
+        if (window.jQuery){     //If jQuery
+            //let stateClass = ".state-" + variable;
+            $('[data-state-variable='+variable+']').html(State[variable]); 
+            try{$('[data-state-value='+variable+']').val(State[variable]);}catch{}
+            $('[data-state-attribute-value='+variable+']').each(function(e){
+               try{ $(this).attr( $(this).attr('data-state-attribute-name') , State[variable]); }catch{}
+            });
+        } else {         
+            let stateClass = "state-" + variable;
+            /* without "[...]", it is not an array, but a nodeList (can't use forEach!)*/
             document.querySelectorAll('[data-state-variable='+variable+']').forEach(element => element.innerHTML = State[variable]);
             document.querySelectorAll('[data-state-value='+variable+']').forEach(function(element){
-                //console.log("update",variable, typeof State[variable],State[variable]);
-                try{ {element.value = State[variable]} }catch{}
+                try{element.value = State[variable]}catch{}
             });
             document.querySelectorAll('[data-state-attribute-value='+variable+']').forEach(function(element){
                 try{ element.setAttribute( element.getAttribute('data-state-attribute-name') , State[variable]); }catch{}
-                });
-            }
+             });
+        }
         return State[variable];
     },
 
@@ -130,13 +135,11 @@ var State = {
      * @param {string} the variable that changed
      */
     updateDependencies: function(variable){
-        if (this.hasValue(variable)) {
-            this.stateDependencies.forEach((dependency,r) => {
-                if (dependency[0] == variable) {
-                    eval(dependency[2]);            
-                }
-            });
-        }
+        this.stateDependencies.forEach((dependency,r) => {
+            if (dependency[0] == variable) {
+                eval(dependency[2]);            // jshint ignore:line
+            }
+        });
         return State[variable];
     },
 
@@ -159,17 +162,22 @@ var State = {
     let dataStateVariables = [];
 
     //for every element that has data-state-value or data-state-attribute-value, *push* its value to the array
-    document.querySelectorAll('[data-state-value]').forEach(function(element){
-        dataStateVariables.push(element.getAttribute('data-state-value'));
-    });
-    document.querySelectorAll('[data-state-attribute-value]').forEach(function(element){
-        dataStateVariables.push(element.getAttribute('data-state-attribute-value'));
-    });
+    if (window.jQuery){
+        $('[data-state-value]').each(function(e){dataStateVariables.push($(this).attr('data-state-value'))});
+        $('[data-state-attribute-value]').each(function(e){dataStateVariables.push($(this).attr('data-state-attribute-value'))});
+    } else {
+        document.querySelectorAll('[data-state-value]').forEach(function(element){
+            dataStateVariables.push(element.getAttribute('data-state-value'));
+        });
+        document.querySelectorAll('[data-state-attribute-value]').forEach(function(element){
+            dataStateVariables.push(element.getAttribute('data-state-attribute-value'));
+        });
+    }
 
     //the unique array of what we gathered from HTML. Create State variables
     let stateVariables = uniqueArray([...textStateVariables, ...dataStateVariables]);
     stateVariables.forEach(variable => {State.create(variable,null)});
-    //State.stateVariables = stateVariables;        //this happens on "create" method (previous line)
+    //State.stateVariables = stateVariables;        //this happens on "create" method
 
     //Make DOM Ready for State changes
     document.body.innerHTML = document.body.innerHTML.replace(DOMvariables, '<span data-state-variable="$1"></span>');
@@ -177,20 +185,32 @@ var State = {
 
 
 //set initial set values based on html attributes and html values. Next, add event listeners to every related element 
-document.addEventListener('DOMContentLoaded', () => {
-// window.addEventListener("load", function() {       
-    document.querySelectorAll('[data-state-value]').forEach(function(element){
-        if (  element.getAttribute('value') && !State.hasValue(element.getAttribute('data-state-value')) ) 
-            {  State[element.getAttribute('data-state-value')] = element.getAttribute('value');  }    
-        //element.getAttribute('value') is the initial value stated in html attribute "value". element.value is the actual current value (input-range always has one!)
-        let updateStateValue = () => {try{ State[element.getAttribute('data-state-value')] = element.value } catch{}};
-        element.addEventListener('input', function(){updateStateValue()});
-        element.addEventListener('change', function(){updateStateValue()});
+if (window.jQuery){     //If jQuery, initiate data-states
+    $(window).on('load', function() {           
+        $('[data-state-value]').each(function(){
+            if ($(this).attr('value')) {State[$(this).attr('data-state-value')] ??= $(this).attr('value');}     // jshint ignore:line
+            // elem.attr('value') the initial value stated in html attribute "value". elem.val() the actual current value (input-range always has one!)
+            let updateStateValue = () => {try{ State[$(this).attr('data-state-value')] = $(this).val(); } catch{}};
+            $(this).on('input change', function(){
+                updateStateValue();
+            });
+        });
     });
-});
+} else {
+    window.addEventListener("load", function() {           
+        document.querySelectorAll('[data-state-value]').forEach(function(element){
+            if (element.getAttribute('value')) {State[element.getAttribute('data-state-value')] ??= element.getAttribute('value');}     // jshint ignore:line
+            //element.getAttribute('value') is the initial value stated in html attribute "value". element.value is the actual current value (input-range always has one!)
+            let updateStateValue = () => {try{ State[element.getAttribute('data-state-value')] = element.value } catch{}};
+            element.addEventListener('input', function(){updateStateValue()});
+            element.addEventListener('change', function(){updateStateValue()});
+        });
+    });
+}
 
 //if user has set var StatePublicVariables = false; , do not make public variables 
 if (typeof StatePublicVariables === 'undefined' || StatePublicVariables) {State.setStateVariablesPublic()}  //jshint ignore:line
+
 
 //inform the developer in the console for non public variables. 
 setTimeout(()=>{

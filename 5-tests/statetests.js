@@ -4,5 +4,7 @@
 let varray = "varray";
 State.create(varray, [13,42]);
 
-State.synchronize(enemies,"localStorage")
+//State.createDependency(varray,[enemies],'State[varray]=State[enemies]*2');
+
+State.synchronize(enemies,"localStorage");
 State.synchronize(petaloudes,"sessionStorage");

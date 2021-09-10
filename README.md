@@ -108,6 +108,11 @@ State[enemies]=7;
 In the first line, we declare that the variable `power` depends  on  `enemies` and `friends` using the relationship: `State[power] = 82-State[enemies]+2*State[friends]; `. In the next line, we declare that the variable `friends` depends on `enemies` using the relationship: `State[friends] = 9-State[enemies];` The third argument must be a valid JavaScript code that gets executed when one of the variables in square brackets change. 
 <br> In the third line we initialize `enemies` only. `friends` and `power` don't need initialization. They get their values according to the rules we just defined.
 
+
+### _Note 3.1: You can use dependencies to watch for changes in State Variables_
+Dependences don't have to be only between State Variables. You can put whatever code you want as the third argument (and a dummy/unused variable as the first) and when the vairable change, the code will be executed. 
+
+
 <hr>
 <hr>
 
