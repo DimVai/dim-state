@@ -31,10 +31,10 @@ var State = {
     /** Shows if the State Variables are public (window) variables */
     areStateVariablesPublic: false,
 
-    /** The set of variables that are syncronized with localStorage */
+    /** The set of variables that are synchronized with localStorage */
     localStorageVariables: new Set(),
 
-    /** The set of variables that are syncronized with sessionStorage */
+    /** The set of variables that are synchronized with sessionStorage */
     sessionStorageVariables: new Set(),
 
     /** Returns if State[variable] has a valid value (not null or undefined) */
@@ -177,7 +177,7 @@ var State = {
 
 
 //set initial set values based on html attributes and html values. Next, add event listeners to every related element 
-document.addEventListener('DOMContentLoaded', () => {           //$(document).ready()
+document.addEventListener('DOMContentLoaded', () => {
 // window.addEventListener("load", function() {       
     document.querySelectorAll('[data-state-value]').forEach(function(element){
         if (  element.getAttribute('value') && !State.hasValue(element.getAttribute('data-state-value')) ) 
@@ -192,15 +192,10 @@ document.addEventListener('DOMContentLoaded', () => {           //$(document).re
 //if user has set var StatePublicVariables = false; , do not make public variables 
 if (typeof StatePublicVariables === 'undefined' || StatePublicVariables) {State.setStateVariablesPublic()}  //jshint ignore:line
 
-//inform the developer in the console for non public variables. 
+//inform the developer in the console for non public variables, only if we are in dev/local environment
 setTimeout(()=>{
     if (!State.areStateVariablesPublic 
         && ["localhost","127.0","172.16","10.","192.168."].some((text)=>window.location.hostname.includes(text))) {
             console.debug('State variables are not public. You must use quotation marks to access them. ');
     }
-},3000);
-
-//if (typeof require !== 'undefined') {
-    export default State;
-//}
-    //module.exports = State;  ////only in node, not in browser!
+},2500);

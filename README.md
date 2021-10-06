@@ -6,17 +6,19 @@
 <br/>
 
 # **Preparation**
-Download the file **dim-state.js** and load it in your website. For example, in your .html head write:
+Download the file **dim-state.js** and load it in your website. For example, in your `.html` head type:
 ```html
-<script defer src="https://dimvai.github.io/dim-state/dim-state.js"></script>
+<script defer src="https://dimvai.github.io/dim-state/dim-state.min.js"></script>
 ```
+Of course you can alternatively download either `dim-state.min.js` or `dim-state.js` and load it locally. 
+
 _Important note_: Load this script:
 * Using `defer`, or at the end of html body 
 * **Before** any other script that accesses or sets any State Variables. 
 
 This, will create a **public Object** named `State` or `window.State`. 
 
-*As an alternative* (not recommended for now), you can import the `dim-state-module.js` (located in folder 4) *as a module*, but its functionality is not fully tested or supported. This way, you can also change the name of the State Object:
+*As another alternative* (not recommended for now), you can import the `dim-state-module.js` (located in folder 4) *as a module*, but its functionality is not fully tested or supported. This way, you can also change the name of the State Object:
 ```JavaScript
     import StateWithWhateverNameYouWant from './dim-state-module.js';
 ```
@@ -61,7 +63,7 @@ Of course, you can mix and match the above ways. If you want to set `friends = 9
 
 ## **Notes**
 
-### *Note 1.1 - Avoid public variables (skip this)*
+### *Note 1.1 - Avoiding public variables (skip this)*
 This is optional, and not recommended if you don't know what you do, so skip this!
 
 `dim-state` makes by default a public variable for every State Variable you declare. In the above examples, there are two public variables: `friends="friends"` and `enemies="enemies"`. If you **don't want** this, run the following command before `dim-state` loads (for example in an html inline script):
@@ -74,7 +76,7 @@ However, in this case, because there are no `friends` or `enemies` variables, yo
     currentEnemies = State["enemies"];
 ```
 
-### *Note 1.2 - Create variables in JavaScript*
+### *Note 1.2 - Create State Variables in JavaScript*
 If you want to create a State Variable in your JavaScript file (instead of creating using the default HTML way above), use the following method (this is not fully tested yet). To create, for example, a State variable `health` with a value `12`:
 ```JavaScript
 let health = 'health';      //so we do not use "health" in quotation marks in the next line
@@ -110,7 +112,7 @@ In the first line, we declare that the variable `power` depends  on  `enemies` a
 
 
 ### _Note 3.1: You can use dependencies to watch for changes in State Variables_
-Dependences don't have to be only between State Variables. You can put whatever code you want as the third argument (and a dummy/unused variable as the first) and when the vairable change, the code will be executed. 
+Dependences don't have to be only between State Variables. You can put whatever code you want as the third argument (and a dummy/unused variable as the first) and when the variable change, the code will be executed. 
 
 
 <hr>

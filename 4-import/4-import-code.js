@@ -3,7 +3,8 @@
 "use strict"; 
 
 import Statue from './dim-state-module.js';
-
+//const Statue = require( './dim-state-module');            //only in node, not in browser!
+//var Statue2 = Statue;
 
 
 //Execute this line if you want to access state variables without quotes. 

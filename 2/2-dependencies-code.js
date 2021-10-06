@@ -4,7 +4,7 @@
 var State = window.State;
 
 //Execute this line if you want to access state variables without quotes.      
-//var StatePublicVariables = false;
+//var StatePublicVariables = false;    //does not work in here. Set in html
 
 //Initialize State Variables values and relationships  
 State.createDependency(power,[enemies,friends], `State[power] = 82 - 1*State[enemies] + 2*State[friends];`);
