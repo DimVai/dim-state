@@ -7,17 +7,23 @@ var State = window.State;
 //var StatePublicVariables = false;    //does not work in here. Set in html
 
 //Initialize State Variables values and relationships  
-State.createDependency(power,[enemies,friends], `State[power] = 82 - 1*State[enemies] + 2*State[friends];`);
-State.createDependency(friends,[enemies], `State[friends] = 9-State[enemies];`);
-State[enemies]=7;
+// State.createDependency(power,[enemies,friends], `State[power] = 82 - 1*State[enemies] + 2*State[friends];`);
+// State.createDependency(friends,[enemies], `State[friends] = 9-State[enemies];`);
+// State[enemies]=7;
 //State[friends]=2;   //This is not needed any more because of dependency!
+
+
+State.createDependency("power",["enemies","friends"], `power = 82 - 1*enemies + 2*friends;`);
+State.createDependency("friends",["enemies"], `friends = 9-enemies;`);
+//enemies = 7;
+State.enemies=7;       //το ίδιο είναι
 
 
 //Button logic
 document.getElementById("kill").addEventListener("click", killEnemy);
 //when button clicked, decrease enemies by 1. Friends and power will upadate automatically using the dependency
 function killEnemy(){
-    State[enemies] = decrease(State[enemies]);
+    State.enemies = decrease(State.enemies);
 }
 //decrease a positive variable by one
 function decrease(variable){

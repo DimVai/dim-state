@@ -40,25 +40,9 @@ var State = {
     /** Returns if State[variable] has a valid value (not null or undefined) */
     hasValue: function(stateVariable) {return this[stateVariable] != null},
 
-    /** 
-     * The user can run State.setStateVarsPublic() in order to use State Variables without using quotes.
-     * (Only for variables that have already been inserted in State.stateVariables)
-    */
-    setStateVariablesPublic: function() {
-        this.stateVariables.forEach( e => {
-            if (!window[e]) {
-                Object.defineProperty(window,e,{
-                    value: e,
-                    writable: false,
-                })}
-            });
-        this.areStateVariablesPublic = true;
-        return this.stateVariables;
-    },
 
-
-    /** Initializes State Variables as State.properties, using DOM crawling or called by user*/  
-    create: function(variable, value = this.defaultStateValue) {
+    /** Initializes State Variables as State.properties and window.properties, using DOM crawling or called by user*/  
+    createStateVariable: function(variable, value = this.defaultStateValue) {
         if (this.freezedMethods.includes(variable)) {
             console.error(`You can't use "${variable}" as a name for a State Variable`);
             return;
@@ -67,7 +51,8 @@ var State = {
         this.stateVariables.add(variable); //it is a set
         Object.defineProperty(State, variable, {
             set: function(value) { 
-                this["_"+variable] = value; 
+                this["_"+variable] = value;
+                if (this.areStateVariablesPublic) {try{window["_"+variable]=value}catch(e){}}  
                 if (this.sessionStorageVariables.has(variable)) {sessionStorage[variable] = value}
                 if (this.localStorageVariables.has(variable)) {localStorage[variable] = value}
                 this.updateDOMwithState(variable);
@@ -75,11 +60,30 @@ var State = {
             },
             get: function() { return this["_"+variable] },
         });
-        this.updateDOMwithState(variable);      //is it really needed? maybe during creation via Javascript (not html)??? 
+        if (this.areStateVariablesPublic){      //only if globals allowed, do the same to window 
+            try{
+                window["_"+variable] = value;     //use _ to bypass known issue with infinite recursion with "set"... 
+                let that = this;
+                Object.defineProperty(window, variable, {
+                    set: function(value) { 
+                        that["_"+variable] = value;
+                        window["_"+variable] = value; 
+                        if (that.sessionStorageVariables.has(variable)) {sessionStorage[variable] = value}
+                        if (that.localStorageVariables.has(variable)) {localStorage[variable] = value}
+                        that.updateDOMwithState(variable);
+                        that.updateDependencies(variable);
+                    },
+                    get: function() { return window["_"+variable] },
+                });
+            }catch(e){console.error(`You can't use "${variable}" as a name for a State Variable`);}
+        }
+        //During creation (not during set). But, is it really needed? maybe during creation via Javascript (not html)??? 
+        this.updateDOMwithState(variable);      
         return value;
     },
 
-    /** Synchronize a State Variable with localStorage or sessionStorage */
+
+    /** Synchronize a State Variable with localStorage or sessionStorage. Used by user. */
     synchronize: function(variable,storageType) {
         if (storageType=="localStorage") {
             this.localStorageVariables.add(variable);
@@ -148,10 +152,14 @@ var State = {
      * (for example, she must not set a State variable named "synchronize") 
     */
     freezedMethods: ["stateVariables","stateDependencies","localStorageVariables","sessionStorageVariables",
-    "hasValue","create","synchronize","updateDOMwithState","createDependency","updateDependencies",
+    "hasValue","createStateVariable","synchronize","updateDOMwithState","createDependency","updateDependencies",
     "freezedMethods"],
 
 };
+
+
+//if user has set var StatePublicVariables = false, do not make public variables 
+if (typeof StatePublicVariables === 'undefined' || StatePublicVariables) {State.areStateVariablesPublic = true}  //jshint ignore:line
 
 
 //Does these things when file gets loaded:
@@ -178,8 +186,7 @@ var State = {
 
     //the unique array of what we gathered from HTML. Create State variables
     let stateVariables = uniqueArray([...textStateVariables, ...dataStateVariables]);
-    stateVariables.forEach(variable => {State.create(variable,null)});
-    //State.stateVariables = stateVariables;        //this happens on "create" method (previous line)
+    stateVariables.forEach(variable => {State.createStateVariable(variable,null)});
 
     //Make DOM Ready for State changes
     document.body.innerHTML = document.body.innerHTML.replace(DOMvariables, '<span data-state-variable="$1"></span>');
@@ -188,10 +195,9 @@ var State = {
 
 //set initial set values based on html attributes and html values. Next, add event listeners to every related element 
 document.addEventListener('DOMContentLoaded', () => {           //$(document).ready()
-// window.addEventListener("load", function() {       
     document.querySelectorAll('[data-state-value]').forEach(function(element){
         if (  element.getAttribute('value') && !State.hasValue(element.getAttribute('data-state-value')) ) 
-            {  State[element.getAttribute('data-state-value')] = element.getAttribute('value');  }    
+            {  State[element.getAttribute('data-state-value')] = element.getAttribute('value')  }    
         //element.getAttribute('value') is the initial value stated in html attribute "value". element.value is the actual current value (input-range always has one!)
         let updateStateValue = () => {try{ State[element.getAttribute('data-state-value')] = element.value } catch{}};
         element.addEventListener('input', function(){updateStateValue()});
@@ -199,13 +205,9 @@ document.addEventListener('DOMContentLoaded', () => {           //$(document).re
     });
 });
 
-//if user has set var StatePublicVariables = false; , do not make public variables 
-if (typeof StatePublicVariables === 'undefined' || StatePublicVariables) {State.setStateVariablesPublic()}  //jshint ignore:line
 
 //inform the developer in the console for non public variables, only if we are in dev/local environment
 setTimeout(()=>{
-    if (!State.areStateVariablesPublic 
-        && ["localhost","127.0","172.16","10.","192.168."].some((text)=>window.location.hostname.includes(text))) {
-            console.debug('State variables are not public. You must use quotation marks to access them. ');
-    }
+    if (!State.areStateVariablesPublic && ["localhost","127.0","172.16","10.","192.168."].some((text)=>window.location.hostname.includes(text))) 
+        { console.debug('State variables are not public. You must use the State object to access them.') }
 },2500);
