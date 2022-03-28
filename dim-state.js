@@ -49,7 +49,7 @@ var State = {
         }
         this["_"+variable] = value;     //use _ to bypass known issue with infinite recursion with "set"... 
         this.stateVariables.add(variable); //it is a set
-        Object.defineProperty(State, variable, {
+        Object.defineProperty(this, variable, {
             set: function(value) { 
                 this["_"+variable] = value;
                 if (this.areStateVariablesPublic) {try{window["_"+variable]=value}catch(e){}}  
